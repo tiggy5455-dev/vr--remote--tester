@@ -3,189 +3,331 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VR Remote Tester 5.0</title>
+
+<title>VR Remote Tester 6.0</title>
 
 <style>
-body {
-  margin: 0;
-  background: #10131a;
-  color: white;
-  font-family: Arial, sans-serif;
-  text-align: center;
-}
+  * {
+    box-sizing: border-box;
+  }
 
-h1 {
-  color: #5ee7ff;
-  margin-bottom: 5px;
-}
+  body {
+    margin: 0;
+    padding: 20px;
+    background: #10131a;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+  }
 
-#status {
-  color: #ffd54a;
-  font-size: 18px;
-  margin: 12px;
-}
+  h1 {
+    text-align: center;
+    color: #63e6ff;
+    margin-bottom: 5px;
+  }
 
-.controller {
-  width: 270px;
-  height: 420px;
-  background: #272d38;
-  border: 4px solid #5ee7ff;
-  border-radius: 70px;
-  margin: 20px auto;
-  position: relative;
-  box-shadow: 0 0 25px #5ee7ff55;
-}
+  .subtitle {
+    text-align: center;
+    color: #b9c2cc;
+    margin-bottom: 20px;
+  }
 
-.joystick-base {
-  position: absolute;
-  width: 130px;
-  height: 130px;
-  background: #11151d;
-  border-radius: 50%;
-  left: 70px;
-  top: 65px;
-}
+  #status {
+    max-width: 700px;
+    margin: 0 auto 20px auto;
+    padding: 15px;
+    background: #202632;
+    border: 2px solid #63e6ff;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 18px;
+  }
 
-#stick {
-  position: absolute;
-  width: 65px;
-  height: 65px;
-  background: #5ee7ff;
-  border-radius: 50%;
-  left: 32px;
-  top: 32px;
-  transition: 0.03s;
-}
+  .connected {
+    color: #69f0ae;
+  }
 
-.button {
-  position: absolute;
-  width: 65px;
-  height: 65px;
-  border-radius: 50%;
-  background: #454d5c;
-  border: 3px solid white;
-  line-height: 65px;
-  font-size: 24px;
-}
+  .waiting {
+    color: #ffd54f;
+  }
 
-#button1 {
-  left: 45px;
-  top: 240px;
-}
+  .panel {
+    max-width: 700px;
+    margin: 15px auto;
+    padding: 18px;
+    background: #202632;
+    border-radius: 14px;
+  }
 
-#button2 {
-  right: 45px;
-  top: 240px;
-}
+  .panel h2 {
+    margin-top: 0;
+    color: #63e6ff;
+  }
 
-.active {
-  background: #00e676 !important;
-  transform: scale(0.9);
-}
+  #controllerInfo {
+    line-height: 1.6;
+    word-break: break-word;
+  }
 
-#trigger {
-  position: absolute;
-  width: 100px;
-  height: 35px;
-  background: #454d5c;
-  border: 3px solid white;
-  border-radius: 15px;
-  left: 82px;
-  bottom: 35px;
-  line-height: 35px;
-}
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+  }
 
-.instructions {
-  max-width: 500px;
-  margin: auto;
-  padding: 15px;
-  color: #cfd8dc;
-}
+  .inputBox {
+    background: #303846;
+    border: 2px solid #596474;
+    border-radius: 10px;
+    padding: 12px 8px;
+    text-align: center;
+    transition: 0.08s;
+  }
+
+  .inputBox strong {
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .pressed {
+    background: #00c853;
+    border-color: white;
+    transform: scale(1.04);
+  }
+
+  .axisActive {
+    background: #1565c0;
+    border-color: #90caf9;
+  }
+
+  .value {
+    font-family: monospace;
+    font-size: 17px;
+  }
+
+  #lastInput {
+    font-size: 20px;
+    color: #ffd54f;
+    min-height: 28px;
+  }
+
+  .instructions {
+    max-width: 700px;
+    margin: 20px auto;
+    color: #c9d1d9;
+    line-height: 1.5;
+  }
 </style>
 </head>
 
 <body>
 
-<h1>VR Remote Tester 5.0</h1>
+<h1>🎮 VR Remote Tester 6.0</h1>
 
-<div id="status">🎮 Press a button on your controller</div>
+<div class="subtitle">
+  Controller Detective Mode
+</div>
 
-<div class="controller">
+<div id="status" class="waiting">
+  Waiting for a controller...
+  <br>
+  Connect your Bluetooth remote, then press buttons and move the joystick.
+</div>
 
-  <div class="joystick-base">
-    <div id="stick"></div>
+<div class="panel">
+  <h2>Controller Information</h2>
+  <div id="controllerInfo">
+    No controller detected yet.
   </div>
+</div>
 
-  <div id="button1" class="button">A</div>
-  <div id="button2" class="button">B</div>
+<div class="panel">
+  <h2>🔎 Last Input Detected</h2>
+  <div id="lastInput">
+    Nothing yet.
+  </div>
+</div>
 
-  <div id="trigger">TRIGGER</div>
+<div class="panel">
+  <h2>Buttons</h2>
+  <div id="buttons" class="grid">
+    Waiting for button data...
+  </div>
+</div>
 
+<div class="panel">
+  <h2>Joystick / Axes</h2>
+  <div id="axes" class="grid">
+    Waiting for axis data...
+  </div>
 </div>
 
 <div class="instructions">
-Move the joystick or press buttons on your Bluetooth VR remote.
-If your browser detects it as a game controller, the picture above will react.
+  <strong>How to test:</strong>
+  Press ONE physical button at a time and watch which numbered
+  button turns green. Then move the joystick left, right, up and down
+  and watch which axis values change.
+  <br><br>
+  This tester does not guess which input is A, B, Trigger, X, Y,
+  or the joystick. It shows the raw controller information your
+  browser gives us.
 </div>
 
 <script>
+const statusBox = document.getElementById("status");
+const controllerInfo = document.getElementById("controllerInfo");
+const buttonsBox = document.getElementById("buttons");
+const axesBox = document.getElementById("axes");
+const lastInput = document.getElementById("lastInput");
 
-const statusText = document.getElementById("status");
-const stick = document.getElementById("stick");
-const button1 = document.getElementById("button1");
-const button2 = document.getElementById("button2");
-const trigger = document.getElementById("trigger");
+let previousButtons = [];
+let previousAxes = [];
 
-window.addEventListener("gamepadconnected", function(e) {
-  statusText.textContent = "✅ Controller detected!";
+window.addEventListener("gamepadconnected", function(event) {
+  statusBox.className = "connected";
+  statusBox.innerHTML =
+    "✅ CONTROLLER DETECTED!<br>" +
+    "Gamepad slot: " + event.gamepad.index;
+
+  showControllerInfo(event.gamepad);
 });
 
-window.addEventListener("gamepaddisconnected", function(e) {
-  statusText.textContent = "❌ Controller disconnected";
+window.addEventListener("gamepaddisconnected", function(event) {
+  statusBox.className = "waiting";
+  statusBox.innerHTML =
+    "❌ Controller disconnected.<br>" +
+    "Reconnect it and press a button.";
+
+  controllerInfo.textContent = "No controller detected.";
 });
 
-function updateController() {
+function showControllerInfo(gamepad) {
+  controllerInfo.innerHTML =
+    "<strong>Name:</strong> " + escapeHTML(gamepad.id) + "<br>" +
+    "<strong>Index:</strong> " + gamepad.index + "<br>" +
+    "<strong>Buttons:</strong> " + gamepad.buttons.length + "<br>" +
+    "<strong>Axes:</strong> " + gamepad.axes.length + "<br>" +
+    "<strong>Mapping:</strong> " +
+    (gamepad.mapping || "No standard mapping");
+}
 
-  const gamepads = navigator.getGamepads
+function escapeHTML(text) {
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function findGamepad() {
+  const pads = navigator.getGamepads
     ? navigator.getGamepads()
     : [];
 
-  const gp = gamepads[0];
-
-  if (gp) {
-
-    statusText.textContent = "✅ Controller connected";
-
-    let x = gp.axes[0] || 0;
-    let y = gp.axes[1] || 0;
-
-    stick.style.transform =
-      "translate(" + (x * 28) + "px," + (y * 28) + "px)";
-
-    if (gp.buttons[0] && gp.buttons[0].pressed) {
-      button1.classList.add("active");
-    } else {
-      button1.classList.remove("active");
-    }
-
-    if (gp.buttons[1] && gp.buttons[1].pressed) {
-      button2.classList.add("active");
-    } else {
-      button2.classList.remove("active");
-    }
-
-    if (gp.buttons[2] && gp.buttons[2].pressed) {
-      trigger.classList.add("active");
-    } else {
-      trigger.classList.remove("active");
+  for (let i = 0; i < pads.length; i++) {
+    if (pads[i]) {
+      return pads[i];
     }
   }
 
-  requestAnimationFrame(updateController);
+  return null;
 }
 
-updateController();
+function update() {
 
+  const gp = findGamepad();
+
+  if (!gp) {
+    requestAnimationFrame(update);
+    return;
+  }
+
+  statusBox.className = "connected";
+  statusBox.innerHTML =
+    "✅ Controller connected and being monitored.";
+
+  showControllerInfo(gp);
+
+  // -------------------------
+  // BUTTONS
+  // -------------------------
+
+  buttonsBox.innerHTML = "";
+
+  gp.buttons.forEach(function(button, index) {
+
+    const box = document.createElement("div");
+    box.className = "inputBox";
+
+    if (button.pressed || button.value > 0.1) {
+      box.classList.add("pressed");
+    }
+
+    box.innerHTML =
+      "<strong>Button " + index + "</strong>" +
+      "<span class='value'>" +
+      button.value.toFixed(3) +
+      "</span>";
+
+    buttonsBox.appendChild(box);
+
+    const oldValue =
+      previousButtons[index] === undefined
+      ? 0
+      : previousButtons[index];
+
+    if (button.value > 0.1 && oldValue <= 0.1) {
+      lastInput.textContent =
+        "🔥 Button " + index +
+        " pressed | value: " +
+        button.value.toFixed(3);
+    }
+  });
+
+  previousButtons =
+    gp.buttons.map(function(button) {
+      return button.value;
+    });
+
+  // -------------------------
+  // AXES / JOYSTICKS
+  // -------------------------
+
+  axesBox.innerHTML = "";
+
+  gp.axes.forEach(function(axis, index) {
+
+    const box = document.createElement("div");
+    box.className = "inputBox";
+
+    if (Math.abs(axis) > 0.15) {
+      box.classList.add("axisActive");
+    }
+
+    box.innerHTML =
+      "<strong>Axis " + index + "</strong>" +
+      "<span class='value'>" +
+      axis.toFixed(3) +
+      "</span>";
+
+    axesBox.appendChild(box);
+
+    const oldValue =
+      previousAxes[index] === undefined
+      ? 0
+      : previousAxes[index];
+
+    if (Math.abs(axis - oldValue) > 0.15) {
+      lastInput.textContent =
+        "🕹️ Axis " + index +
+        " moved | value: " +
+        axis.toFixed(3);
+    }
+  });
+
+  previousAxes = gp.axes.slice();
+
+  requestAnimationFrame(update);
+}
+
+update();
 </script>
 
 </body>
