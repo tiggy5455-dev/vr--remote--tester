@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VR Remote Tester 5.0</title>
+
+<style>
+body {
+  margin: 0;
+  background: #10131a;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+h1 {
+  color: #5ee7ff;
+  margin-bottom: 5px;
+}
+
+#status {
+  color: #ffd54a;
+  font-size: 18px;
+  margin: 12px;
+}
+
+.controller {
+  width: 270px;
+  height: 420px;
+  background: #272d38;
+  border: 4px solid #5ee7ff;
+  border-radius: 70px;
+  margin: 20px auto;
+  position: relative;
+  box-shadow: 0 0 25px #5ee7ff55;
+}
+
+.joystick-base {
+  position: absolute;
+  width: 130px;
+  height: 130px;
+  background: #11151d;
+  border-radius: 50%;
+  left: 70px;
+  top: 65px;
+}
+
+#stick {
+  position: absolute;
+  width: 65px;
+  height: 65px;
+  background: #5ee7ff;
+  border-radius: 50%;
+  left: 32px;
+  top: 32px;
+  transition: 0.03s;
+}
+
+.button {
+  position: absolute;
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  background: #454d5c;
+  border: 3px solid white;
+  line-height: 65px;
+  font-size: 24px;
+}
+
+#button1 {
+  left: 45px;
+  top: 240px;
+}
+
+#button2 {
+  right: 45px;
+  top: 240px;
+}
+
+.active {
+  background: #00e676 !important;
+  transform: scale(0.9);
+}
+
+#trigger {
+  position: absolute;
+  width: 100px;
+  height: 35px;
+  background: #454d5c;
+  border: 3px solid white;
+  border-radius: 15px;
+  left: 82px;
+  bottom: 35px;
+  line-height: 35px;
+}
+
+.instructions {
+  max-width: 500px;
+  margin: auto;
+  padding: 15px;
+  color: #cfd8dc;
+}
+</style>
+</head>
+
+<body>
+
+<h1>VR Remote Tester 5.0</h1>
+
+<div id="status">🎮 Press a button on your controller</div>
+
+<div class="controller">
+
+  <div class="joystick-base">
+    <div id="stick"></div>
+  </div>
+
+  <div id="button1" class="button">A</div>
+  <div id="button2" class="button">B</div>
+
+  <div id="trigger">TRIGGER</div>
+
+</div>
+
+<div class="instructions">
+Move the joystick or press buttons on your Bluetooth VR remote.
+If your browser detects it as a game controller, the picture above will react.
+</div>
+
+<script>
+
+const statusText = document.getElementById("status");
+const stick = document.getElementById("stick");
+const button1 = document.getElementById("button1");
+const button2 = document.getElementById("button2");
+const trigger = document.getElementById("trigger");
+
+window.addEventListener("gamepadconnected", function(e) {
+  statusText.textContent = "✅ Controller detected!";
+});
+
+window.addEventListener("gamepaddisconnected", function(e) {
+  statusText.textContent = "❌ Controller disconnected";
+});
+
+function updateController() {
+
+  const gamepads = navigator.getGamepads
+    ? navigator.getGamepads()
+    : [];
+
+  const gp = gamepads[0];
+
+  if (gp) {
+
+    statusText.textContent = "✅ Controller connected";
+
+    let x = gp.axes[0] || 0;
+    let y = gp.axes[1] || 0;
+
+    stick.style.transform =
+      "translate(" + (x * 28) + "px," + (y * 28) + "px)";
+
+    if (gp.buttons[0] && gp.buttons[0].pressed) {
+      button1.classList.add("active");
+    } else {
+      button1.classList.remove("active");
+    }
+
+    if (gp.buttons[1] && gp.buttons[1].pressed) {
+      button2.classList.add("active");
+    } else {
+      button2.classList.remove("active");
+    }
+
+    if (gp.buttons[2] && gp.buttons[2].pressed) {
+      trigger.classList.add("active");
+    } else {
+      trigger.classList.remove("active");
+    }
+  }
+
+  requestAnimationFrame(updateController);
+}
+
+updateController();
+
+</script>
+
+</body>
+</html>
